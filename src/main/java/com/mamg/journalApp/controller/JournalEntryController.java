@@ -7,6 +7,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,33 +20,31 @@ public class JournalEntryController {
     @Autowired
     private JournalEntryService journalEntryService;
 
-    @GetMapping
-    public List<JournalEntry> getAll() {
-        return journalEntryService.getAll();
-    }
-
-    @PostMapping("/{username}")
-    public ResponseEntity<User> createEntry(@RequestBody JournalEntry journalEntry, @PathVariable String username) {
+    @PostMapping("/create-entry")
+    public ResponseEntity<User> createEntry(@RequestBody JournalEntry journalEntry) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         return new ResponseEntity<>(journalEntryService.saveEntry(journalEntry, username), HttpStatus.OK);
     }
 
-    @GetMapping("/id/{myId}")
-    public JournalEntry getEntityById(@PathVariable ObjectId myId) {
-        return journalEntryService.findById(myId).orElse(null);
+    @GetMapping("/entries")
+    public List<JournalEntry> getEntityById() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return journalEntryService.getAllMyEntries(username);
     }
 
-    @DeleteMapping("/{username}/{journalEntryId}")
-    public boolean deleteEntityById(@PathVariable String username, @PathVariable ObjectId journalEntryId) {
-        journalEntryService.deleteById(username, journalEntryId);
-        return true;
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteEntityById(@PathVariable ObjectId id) {
+        return journalEntryService.deleteById(id);
     }
 
     @PutMapping("/id/{myId}")
-    public JournalEntry updateEntityById(@PathVariable ObjectId myId, @RequestBody JournalEntry newEntity) {
+    public ResponseEntity<?> updateEntityById(@PathVariable ObjectId myId, @RequestBody JournalEntry newEntity) {
         return journalEntryService.updateJournalEntry(myId, newEntity);
     }
 
 
 }
 
-//Continue From Here: https://www.youtube.com/watch?v=HjDyv7gL4Wg&list=PLA3GkZPtsafacdBLdd3p1DyRd5FGfr3Ue&index=18
+//Continue From Here: https://www.youtube.com/watch?v=QrCVj8ek83k&list=PLA3GkZPtsafacdBLdd3p1DyRd5FGfr3Ue&index=21

@@ -8,8 +8,11 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +22,16 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User saveEntry(User user) {
+    private final static BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+    public User saveNewUserAdmin(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("USER","ADMIN"));
+        return userRepository.save(user);
+    }
+    public User saveNewUser(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("USER"));
         return userRepository.save(user);
     }
 
@@ -31,20 +43,16 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public ResponseEntity<?> updateUserById(User newUser, ObjectId id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()){
-            User user = userOptional.get();
-            user.setUsername(newUser.getUsername());
-            user.setPassword(newUser.getPassword());
-            userRepository.save(user);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<?> updateUserById(User newUser, String username) {
+        User user = userRepository.findByUsername(username);
+        user.setUsername(newUser.getUsername());
+        user.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
+        userRepository.save(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    public void deleteById(ObjectId id) {
-        userRepository.deleteById(id);
+    public void deleteByUsername(String username) {
+        userRepository.deleteByUsername(username);
     }
 
 
