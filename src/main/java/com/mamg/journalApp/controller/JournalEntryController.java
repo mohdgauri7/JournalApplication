@@ -47,4 +47,4 @@ public class JournalEntryController {
 
 }
 
-//Continue From Here: https://www.youtube.com/watch?v=QrCVj8ek83k&list=PLA3GkZPtsafacdBLdd3p1DyRd5FGfr3Ue&index=21
+//Continue From Here: https://www.youtube.com/watch?v=mILLHaIjGn4&list=PLA3GkZPtsafacdBLdd3p1DyRd5FGfr3Ue&index=24
