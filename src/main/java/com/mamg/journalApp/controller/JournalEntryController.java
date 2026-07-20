@@ -47,5 +47,5 @@ public class JournalEntryController {
 
 }
 
-//Update tracker
+//Update tracker - updated
 //Continue From Here: https://www.youtube.com/watch?v=bphMYrTv8pA&list=PLA3GkZPtsafacdBLdd3p1DyRd5FGfr3Ue&index=27
